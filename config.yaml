@@ -1,0 +1,59 @@
+receivers:
+  dlt:
+    daemon_address: "localhost"
+    daemon_port: 3490
+    extractors:
+      - pattern: "Execute periodic Work with period: ([0-9.]+)"
+        field_name: "work_period_ms"
+  hostmetrics:
+    collection_interval: 1s
+    scrapers:
+      cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
+      memory:
+        metrics:
+          system.memory.usage:
+            enabled: true
+      disk:
+        metrics:
+          system.disk.operations:
+            enabled: true
+          system.disk.io:
+            enabled: true
+          system.disk.operation_time:
+            enabled: true
+      load:
+        metrics:
+          system.cpu.load_average.1m:
+            enabled: true
+
+processors:
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+  filter:
+    error_mode: ignore
+    logs:
+      log_record:
+        - 'not IsMatch(body, ".*test.*")'
+
+exporters:
+  debug:
+    verbosity: detailed
+  otlphttp:
+    endpoint: "http://otel-http-lgtm.apps-crc.testing" # using the route port
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    metrics:
+      receivers: [hostmetrics]
+      processors: [batch]
+      exporters: [debug, otlphttp]
+    logs:
+      receivers: [dlt]
+      processors: [batch, filter]
+      exporters: [debug, otlphttp]

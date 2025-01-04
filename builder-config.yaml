@@ -1,0 +1,32 @@
+  dist:
+    name: dltreceiver
+    description: DLT receiver
+    output_path: .
+    module: gitlab.com/rh-sdv-cloud-incubator/dlt-otel-receiver
+
+  exporters:
+    - gomod:
+        go.opentelemetry.io/collector/exporter/debugexporter v0.112.0
+    - gomod:
+        go.opentelemetry.io/collector/exporter/otlpexporter v0.112.0
+    - gomod:
+        go.opentelemetry.io/collector/exporter/otlphttpexporter v0.112.0
+
+  processors:
+    - gomod:
+        go.opentelemetry.io/collector/processor/batchprocessor v0.112.0
+    - gomod:
+        github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.112.0
+
+  receivers:
+    - gomod:
+        go.opentelemetry.io/collector/receiver/otlpreceiver v0.112.0
+    - gomod:
+        github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.112.0
+
+  providers:
+    - gomod: go.opentelemetry.io/collector/confmap/provider/envprovider v1.17.0
+    - gomod: go.opentelemetry.io/collector/confmap/provider/fileprovider v1.17.0
+    - gomod: go.opentelemetry.io/collector/confmap/provider/httpprovider v1.17.0
+    - gomod: go.opentelemetry.io/collector/confmap/provider/httpsprovider v1.17.0
+    - gomod: go.opentelemetry.io/collector/confmap/provider/yamlprovider v1.17.0

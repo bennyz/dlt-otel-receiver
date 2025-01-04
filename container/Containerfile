@@ -1,0 +1,20 @@
+FROM golang:1.23 AS go-builder
+
+WORKDIR /build
+COPY go.mod ./
+COPY go.sum ./
+COPY vendor/ vendor/
+COPY . .
+RUN go build -mod=vendor -o dltreceiver .
+
+FROM fedora:41
+
+WORKDIR /app
+COPY --from=go-builder /build/dltreceiver /app/
+RUN chmod -R 755 /app
+ENV PATH="/app:${PATH}"
+EXPOSE 3490
+COPY container/entrypoint.sh /app/
+RUN chmod +x /app/entrypoint.sh
+
+CMD ["/app/entrypoint.sh"]
